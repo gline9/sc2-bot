@@ -35,7 +35,7 @@ public abstract class AbsUnit<U extends AbsUnit<U>> implements ControllableUnit
 
     public void executeAbilityOnUnit(S2Agent agent, Ability ability, Unit unit, boolean queued)
     {
-        agent.actions().unitCommand(unit, ability, unit, queued);
+        agent.actions().unitCommand(this.unit, ability, unit, queued);
     }
 
     public void executeAbilityAtLocation(S2Agent agent, Ability ability, Point2d location, boolean queued)
@@ -53,6 +53,17 @@ public abstract class AbsUnit<U extends AbsUnit<U>> implements ControllableUnit
         }
 
         command.handle((U)this);
+    }
+
+    @Override
+    public void onIdle()
+    {
+        if (null == command)
+        {
+            return;
+        }
+
+        command.onIdle((U)this);
     }
 
     public Command<? super U> getCommand()

@@ -1,23 +1,19 @@
 package com.gline9.sc2.command;
 
 import com.github.ocraft.s2client.bot.S2Agent;
-import com.github.ocraft.s2client.protocol.spatial.Point;
+import com.gline9.sc2.conglomerates.BasePoint;
 import com.gline9.sc2.units.Minerals;
 import com.gline9.sc2.units.SCV;
-import com.gline9.sc2.units.UnitPool;
-
-import java.util.Comparator;
-import java.util.Set;
 
 public class MineralMiningCommand implements Command<SCV>
 {
     private final S2Agent agent;
-    private final UnitPool unitPool;
+    private final BasePoint base;
 
-    public MineralMiningCommand(S2Agent agent, UnitPool unitPool)
+    public MineralMiningCommand(S2Agent agent, BasePoint base)
     {
         this.agent = agent;
-        this.unitPool = unitPool;
+        this.base = base;
     }
 
     @Override
@@ -28,13 +24,8 @@ public class MineralMiningCommand implements Command<SCV>
             return true;
         }
 
-        Minerals minerals = getBestMineralPatch(unitPool.getUnitsOfType(Minerals.class), scv.getUnit().getPosition());
+        Minerals minerals = base.getRandomMineralPatch();
         scv.mineMinerals(agent, minerals);
         return true;
-    }
-
-    private Minerals getBestMineralPatch(Set<? extends Minerals> minerals, Point point)
-    {
-        return minerals.stream().min(Comparator.comparing(a -> a.getUnit().getPosition().distance(point))).orElseThrow(RuntimeException::new);
     }
 }

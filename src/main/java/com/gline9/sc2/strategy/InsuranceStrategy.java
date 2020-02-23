@@ -14,12 +14,12 @@ import java.util.Iterator;
 public class InsuranceStrategy
 {
     private final S2Agent agent;
-    private final BuildingPlacementStrategy buildingPlacementStrategy;
+    private final InBasePlacementStrategy buildingPlacementStrategy;
     private final UnitPool unitPool;
     private int ccCount = 1;
     private boolean buildingCC = false;
 
-    public InsuranceStrategy(S2Agent agent, BuildingPlacementStrategy buildingPlacementStrategy, UnitPool unitPool)
+    public InsuranceStrategy(S2Agent agent, InBasePlacementStrategy buildingPlacementStrategy, UnitPool unitPool)
     {
         this.agent = agent;
         this.buildingPlacementStrategy = buildingPlacementStrategy;
@@ -68,7 +68,7 @@ public class InsuranceStrategy
         final SCV found = next;
         Command<? super SCV> previousCommand = found.getCommand();
 
-        BuildStructureCommand buildCC = new BuildStructureCommand(agent, buildingPlacementStrategy, Abilities.BUILD_COMMAND_CENTER);
+        BuildStructureCommand buildCC = new BuildStructureCommand(agent, buildingPlacementStrategy, Abilities.BUILD_COMMAND_CENTER, null);
         buildCC.subscribeToCompletion(() -> {
             found.setCommand(previousCommand);
         });

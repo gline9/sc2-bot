@@ -5,4 +5,9 @@ import com.gline9.sc2.units.ControllableUnit;
 public interface Command<T extends ControllableUnit>
 {
     boolean handle(T unit);
+
+    default void onIdle(T unit)
+    {
+        // default do nothing
+    }
 }

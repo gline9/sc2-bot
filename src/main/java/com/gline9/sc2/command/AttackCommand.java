@@ -2,29 +2,39 @@ package com.gline9.sc2.command;
 
 import com.github.ocraft.s2client.bot.S2Agent;
 import com.github.ocraft.s2client.protocol.data.Abilities;
+import com.github.ocraft.s2client.protocol.data.UnitType;
 import com.github.ocraft.s2client.protocol.spatial.Point2d;
+import com.gline9.sc2.units.AbsUnit;
+import com.gline9.sc2.units.ControllableUnit;
 import com.gline9.sc2.units.Marine;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public class AttackCommand implements Command<Marine>
+public class AttackCommand implements Command<AbsUnit>
 {
-    private final List<Point2d> startLocations;
+    private static List<Point2d> startLocations;
     private S2Agent agent;
     private final PatrolCommand patrolCommand;
+    private final RandomPatrolCommand randomPatrolCommand;
 
     public AttackCommand(S2Agent agent)
     {
         this.agent = agent;
-        startLocations = new ArrayList<>(agent.observation().getGameInfo().getStartRaw().get().getStartLocations());
+        if (null == startLocations)
+        {
+            startLocations = new ArrayList<>(agent.observation().getGameInfo().getStartRaw().get().getStartLocations());
+        }
         this.patrolCommand = new PatrolCommand(agent);
+        this.randomPatrolCommand = new RandomPatrolCommand(agent);
+    }
+
+    public void addPreferredType(UnitType type)
+    {
+        this.patrolCommand.addPreferredType(type);
     }
 
     @Override
-    public boolean handle(Marine unit)
+    public boolean handle(AbsUnit unit)
     {
         Point2d location = unit.getUnit().getPosition().toPoint2d();
 
@@ -35,7 +45,22 @@ public class AttackCommand implements Command<Marine>
             return true;
         }
 
+        if (startLocations.isEmpty())
+        {
+            randomPatrolCommand.handle(unit);
+            return true;
+        }
+
         unit.executeAbilityAtLocation(agent, Abilities.ATTACK_ATTACK, startLocations.iterator().next(), false);
         return true;
+    }
+
+    @Override
+    public void onIdle(AbsUnit unit)
+    {
+        if (startLocations.isEmpty())
+        {
+            this.randomPatrolCommand.onIdle(unit);
+        }
     }
 }

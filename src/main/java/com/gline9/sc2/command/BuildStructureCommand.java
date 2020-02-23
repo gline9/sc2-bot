@@ -2,6 +2,7 @@ package com.gline9.sc2.command;
 
 import com.github.ocraft.s2client.bot.S2Agent;
 import com.github.ocraft.s2client.protocol.data.Ability;
+import com.gline9.sc2.conglomerates.BasePoint;
 import com.gline9.sc2.strategy.BuildingPlacementStrategy;
 import com.gline9.sc2.units.SCV;
 
@@ -13,12 +14,14 @@ public class BuildStructureCommand implements Command<SCV>
 
     private boolean building;
     private Runnable completionRunnable;
+    private final BasePoint base;
 
-    public BuildStructureCommand(S2Agent agent, BuildingPlacementStrategy buildingPlacementStrategy, Ability abilityToBuildStructure)
+    public BuildStructureCommand(S2Agent agent, BuildingPlacementStrategy buildingPlacementStrategy, Ability abilityToBuildStructure, BasePoint base)
     {
         this.agent = agent;
         this.buildingPlacementStrategy = buildingPlacementStrategy;
         this.abilityToBuildStructure = abilityToBuildStructure;
+        this.base = base;
     }
 
     @Override
@@ -35,7 +38,7 @@ public class BuildStructureCommand implements Command<SCV>
             return false;
         }
 
-        unit.buildStructure(agent, abilityToBuildStructure, buildingPlacementStrategy.getLocationForStructure(unit.getUnit(), abilityToBuildStructure, unit.getLocation()));
+        unit.buildStructure(agent, abilityToBuildStructure, buildingPlacementStrategy.getLocationForStructure(unit.getUnit(), abilityToBuildStructure, base));
         building = true;
 
         return true;

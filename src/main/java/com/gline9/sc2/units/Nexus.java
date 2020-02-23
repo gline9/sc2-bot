@@ -4,9 +4,9 @@ import com.github.ocraft.s2client.protocol.data.Abilities;
 import com.github.ocraft.s2client.protocol.data.Ability;
 import com.github.ocraft.s2client.protocol.unit.Unit;
 
-public class CommandCenter extends Base<CommandCenter>
+public class Nexus extends Base<Nexus>
 {
-    public CommandCenter(Unit unit)
+    public Nexus(Unit unit)
     {
         super(unit);
     }
@@ -14,6 +14,6 @@ public class CommandCenter extends Base<CommandCenter>
     @Override
     protected Ability getTrainWorkerAbility()
     {
-        return Abilities.TRAIN_SCV;
+        return Abilities.TRAIN_PROBE;
     }
 }

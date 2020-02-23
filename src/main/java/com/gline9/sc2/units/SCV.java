@@ -45,5 +45,6 @@ public class SCV extends AbsUnit<SCV>
     {
         isMiningMinerals = false;
         isBuildingStructure = false;
+        super.onIdle();
     }
 }

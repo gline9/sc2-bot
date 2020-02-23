@@ -1,12 +1,15 @@
 package com.gline9.sc2.units;
 
 import com.github.ocraft.s2client.bot.gateway.UnitInPool;
+import com.github.ocraft.s2client.protocol.spatial.Point2d;
 import com.github.ocraft.s2client.protocol.unit.Unit;
+import com.gline9.sc2.conglomerates.BasePoint;
 import io.reactivex.annotations.NonNull;
 
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class UnitPool
 {
@@ -34,7 +37,7 @@ public class UnitPool
             return iunit;
         }
 
-        IUnit iunit = factory.createUnit(unitInPool);
+        IUnit iunit = factory.createUnit(unitInPool, this);
         if (null == iunit)
         {
             return null;
@@ -101,6 +104,12 @@ public class UnitPool
         }
 
         unitTypeMap.forEach((key, value) -> value.remove(unit));
+    }
+
+    public <T extends IUnit> List<T> getNClosestUnits(Point2d point, Class<T> clazz, int number)
+    {
+        Set<? extends T> units = this.getUnitsOfType(clazz);
+        return units.stream().sorted(Comparator.comparing(unit -> unit.getUnit().getPosition().toPoint2d().distance(point))).limit(number).collect(Collectors.toList());
     }
 
     private void runForAllSubtypes(Class<? extends IUnit> clazz, IUnit t, BiConsumer<Class<? extends IUnit>, IUnit> consumer)

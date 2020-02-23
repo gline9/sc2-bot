@@ -1,11 +1,12 @@
 package com.gline9.sc2.command;
 
 import com.github.ocraft.s2client.bot.S2Agent;
+import com.gline9.sc2.units.Base;
 import com.gline9.sc2.units.CommandCenter;
 import com.gline9.sc2.units.SCV;
 import com.gline9.sc2.units.UnitPool;
 
-public class CreateWorkerCommand implements Command<CommandCenter>
+public class CreateWorkerCommand implements Command<Base>
 {
     private final S2Agent agent;
     private final UnitPool unitPool;
@@ -17,11 +18,11 @@ public class CreateWorkerCommand implements Command<CommandCenter>
     }
 
     @Override
-    public boolean handle(CommandCenter unit)
+    public boolean handle(Base unit)
     {
-        if (agent.observation().getMinerals() >= 50 && !unit.isUnitInQueue() && unitPool.getUnitsOfType(SCV.class).size() < 20)
+        if (agent.observation().getMinerals() >= 50 && !unit.isUnitInQueue())
         {
-            unit.createSCV(agent);
+            unit.createWorker(agent);
         }
 
         return true;

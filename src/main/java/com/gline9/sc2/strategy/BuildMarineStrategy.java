@@ -6,36 +6,34 @@ import com.gline9.sc2.command.AttackCommand;
 import com.gline9.sc2.command.BuildStructureCommand;
 import com.gline9.sc2.command.Command;
 import com.gline9.sc2.command.PatrolCommand;
+import com.gline9.sc2.conglomerates.BasePoint;
 import com.gline9.sc2.units.*;
 
 import java.util.Collection;
-import java.util.Iterator;
 
-public class BuildMarineStrategy
+public class BuildMarineStrategy implements ArmyConstructionStrategy
 {
+    private static final int BARRACKS_COUNT = 4;
     private final S2Agent agent;
-    private final BuildingPlacementStrategy buildingPlacementStrategy;
+    private final InBasePlacementStrategy buildingPlacementStrategy;
     private final UnitPool unitPool;
     private int barracksCount = 0;
     private boolean buildingBarracks = false;
+    private final BasePoint basePoint;
 
-    public BuildMarineStrategy(S2Agent agent, BuildingPlacementStrategy buildingPlacementStrategy, UnitPool unitPool)
+    public BuildMarineStrategy(S2Agent agent, InBasePlacementStrategy buildingPlacementStrategy, UnitPool unitPool, BasePoint base)
     {
         this.agent = agent;
         this.buildingPlacementStrategy = buildingPlacementStrategy;
         this.unitPool = unitPool;
-
-        unitPool.subscribeToUnitCreation(Marine.class, marine -> {
-            System.out.println("Marine created");
-            marine.setCommand(new PatrolCommand(agent));
-        });
+        this.basePoint = base;
     }
 
     public void tick()
     {
         Collection<? extends Marine> marines = unitPool.getUnitsOfType(Marine.class);
 
-        if (marines.size() > 20)
+        if (marines.size() > 30)
         {
             for (Marine marine : marines)
             {
@@ -66,46 +64,28 @@ public class BuildMarineStrategy
             }
         }
 
-        int barracksC = unitPool.getUnitsOfType(Barracks.class).size();
-
-        if (barracksC > barracksCount)
-        {
-            barracksCount = barracksC;
-            buildingBarracks = false;
-        }
-
-        if (barracksC > 1 || buildingBarracks)
+        if (buildingBarracks || barracksCount >= BARRACKS_COUNT)
         {
             return;
         }
 
-        Iterator<? extends SCV> scv = unitPool.getUnitsOfType(SCV.class).iterator();
+        final SCV scv = basePoint.getAvailableWorker();
 
-        SCV next = null;
-        while (scv.hasNext())
-        {
-            next = scv.next();
-
-            if (!next.isBuildingStructure())
-            {
-                break;
-            }
-        }
-
-        if (null == next)
+        if (null == scv)
         {
             return;
         }
 
-        final SCV found = next;
-        Command<? super SCV> previousCommand = found.getCommand();
+        Command<? super SCV> previousCommand = scv.getCommand();
 
-        BuildStructureCommand buildBarracks = new BuildStructureCommand(agent, buildingPlacementStrategy, Abilities.BUILD_BARRACKS);
+        BuildStructureCommand buildBarracks = new BuildStructureCommand(agent, buildingPlacementStrategy, Abilities.BUILD_BARRACKS, basePoint);
         buildBarracks.subscribeToCompletion(() -> {
-            found.setCommand(previousCommand);
+            scv.setCommand(previousCommand);
+            barracksCount++;
+            buildingBarracks = false;
         });
 
-        found.setCommand(buildBarracks);
+        scv.setCommand(buildBarracks);
 
         buildingBarracks = true;
     }
