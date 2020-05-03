@@ -82,7 +82,9 @@ public class BasePoint
             mineralPatches = unitPool.getNClosestUnits(expansionPoint.toPoint2d(), Minerals.class, 8);
             for (Minerals minerals : mineralPatches)
             {
-                createBox(agent, minerals.getUnit().getPosition(), 1);
+                System.out.println(toString() + ", " + minerals.getUnit().getPosition());
+                markLocation(agent, minerals.getUnit().getPosition());
+                agent.debug().debugTextOut(toString(), minerals.getUnit().getPosition(), Color.GREEN, 20);
             }
             agent.debug().sendDebug();
         }
@@ -93,7 +95,7 @@ public class BasePoint
     public List<SCV> removeExtraWorkers()
     {
         long notReady = scvs.stream().filter(scv -> !scv.isMiningMinerals()).count();
-        List<SCV> extras = scvs.stream().filter(scv -> !scv.isMiningMinerals()).skip(maxWorkers - notReady).collect(Collectors.toList());
+        List<SCV> extras = scvs.stream().filter(SCV::isMiningMinerals).skip(maxWorkers - notReady).collect(Collectors.toList());
         scvs.removeAll(extras);
         return extras;
     }
@@ -125,9 +127,10 @@ public class BasePoint
 
     }
 
-    public static void createBox(S2Agent agent, Point point, int radius)
+    public static void markLocation(S2Agent agent, Point point)
     {
-        agent.debug().debugBoxOut(point.sub(Point.of(radius, radius)), point.add(Point.of(radius, radius)), Color.RED);
+        agent.debug().debugBoxOut(point.sub(Point.of(1, 1)), point.add(Point.of(1, 1)), Color.RED);
+        agent.debug().debugBoxOut(point.sub(Point.of(2, 2)), point.add(Point.of(2, 2)), Color.RED);
     }
 
     public SCV getAvailableWorker()

@@ -87,13 +87,17 @@ public class PatrolCommand implements Command<AbsUnit>
 
         //double distance = melee ? agent.query().pathingDistance(us.getPosition().toPoint2d(), enemy.getPosition().toPoint2d()) : us.getPosition().toPoint2d().distance(enemy.getPosition().toPoint2d());
         double distance = us.getPosition().toPoint2d().distance(enemy.getPosition().toPoint2d());
-        double score = unitTypePreferences.contains(enemyType.getUnitType()) ? 0 : -1e50;
+        //double score = unitTypePreferences.contains(enemyType.getUnitType()) ? 0 : -1e50;
+        double score = 0;
 
-        score -= distance * 2;
-        //score += attack;
-        //score -= armor * 10;
+        score -= distance * 10;
+        score += attack * 5;
+        if (attack < 1)
+        {
+            score -= 10;
+        }
+        score -= armor * 3;
         score -= percentHealth;
-        //score -= remainingHealth / 50;
 
         return score;
     }

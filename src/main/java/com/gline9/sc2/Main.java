@@ -13,8 +13,8 @@ public class Main
         S2Coordinator coordinator = S2Coordinator.setup()
                 .loadSettings(args)
                 .setParticipants(
-                        S2Coordinator.createParticipant(Race.ZERG, agent),
-                        S2Coordinator.createComputer(Race.TERRAN, Difficulty.VERY_EASY)
+                        S2Coordinator.createParticipant(Race.TERRAN, agent),
+                        S2Coordinator.createComputer(Race.TERRAN, Difficulty.MEDIUM)
                 ).launchStarcraft()
                 .startGame(BattlenetMap.of("Triton LE"));
 

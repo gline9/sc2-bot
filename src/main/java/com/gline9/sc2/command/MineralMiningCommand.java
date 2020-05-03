@@ -25,6 +25,7 @@ public class MineralMiningCommand implements Command<SCV>
         }
 
         Minerals minerals = base.getRandomMineralPatch();
+        System.out.println("Mining " + minerals.getLocation());
         scv.mineMinerals(agent, minerals);
         return true;
     }

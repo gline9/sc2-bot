@@ -33,7 +33,7 @@ public class UnitStrategist implements Strategy
         ArmyConstructionStrategy buildMarines = new BuildMarineStrategy(agent, buildingPlacementStrategy, unitPool, start);
         this.start.setArmyConstructionStrategy(buildMarines);
 
-        this.expansionBases = agent.query().calculateExpansionLocations(agent.observation(), agent.debug())
+        this.expansionBases = agent.query().calculateExpansionLocations(agent.observation())
                 .stream()
                 .map(point -> new BasePoint(agent, point, unitPool))
                 .collect(Collectors.toList());

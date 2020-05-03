@@ -2,6 +2,7 @@ package com.gline9.sc2.units;
 
 import com.github.ocraft.s2client.bot.gateway.UnitInPool;
 import com.github.ocraft.s2client.protocol.spatial.Point2d;
+import com.github.ocraft.s2client.protocol.unit.DisplayType;
 import com.github.ocraft.s2client.protocol.unit.Unit;
 import com.gline9.sc2.conglomerates.BasePoint;
 import io.reactivex.annotations.NonNull;
@@ -28,6 +29,11 @@ public class UnitPool
     {
         Unit unit = unitInPool.unit();
         Long tag = unit.getTag().getValue();
+
+        if (unit.getDisplayType() == DisplayType.SNAPSHOT)
+        {
+            return null;
+        }
 
         if (unitIDMap.containsKey(tag))
         {

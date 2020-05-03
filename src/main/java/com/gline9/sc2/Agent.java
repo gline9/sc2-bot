@@ -26,8 +26,8 @@ public class Agent extends S2Agent
     public void onGameStart()
     {
         System.out.println("Hello world of Starcraft II bots!");
-        //strategy = new UnitStrategist(unitPool, this);
-        strategy = new WorkerRushStrategy(unitPool, this);
+        strategy = new UnitStrategist(unitPool, this);
+        //strategy = new WorkerRushStrategy(unitPool, this);
     }
 
     @Override
